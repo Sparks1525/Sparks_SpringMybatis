@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xmg.mapper.UserMapper">
+
+    <resultMap id="User" type="user_mapping">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="email" property="email"/>
+        <result column="age" property="age"/>
+        <result column="borndate" property="bornDate"/>
+    </resultMap>
+
+
+    <insert id="add" keyColumn="id" keyProperty="id" useGeneratedKeys="true" parameterType="User">
+        INSERT INTO user (name,email,age,borndate) VALUE (#{name},#{email},#{age},#{bornDate})
+    </insert>
+
+
+    <update id="update" parameterType="com.xmg.mybatis.domain.User">
+        UPDATE user
+        <set>
+            <if test="name=null">
+              name=#{name},
+            </if>
+            <if test="email=null">
+              email=#{email},
+            </if>
+            age=#{age},
+            <if test="bornDate!=null">
+              bornadate=#{borndate}
+            </if>
+            </set>
+        WHERE id=#{id}
+    </update>
+
+    <!-- 抽取colum -->
+    <sql id="user_column">
+        id,name,email,age,borndate
+    </sql>
+
+    <!-- get
+       注意,一个SQL元素只能有一个resultMap或者一个resultType
+    -->
+    <select id="get" parameterType="long" resultMap="user_mapping">
+        SELECT
+        <include refid="user_column"/>
+        FROM user WHERE id = #{id}
+    </select>
+
+    <!-- delete -->
+    <delete id="delete" parameterType="long">
+        DELETE FROM user WHERE id=#{id}
+    </delete>
+
+    <!-- list -->
+    <select id="list" resultMap="user_mapping">
+        SELECT
+        <include refid="user_column"/>
+        FROM user
+    </select>
+
+</mapper>
